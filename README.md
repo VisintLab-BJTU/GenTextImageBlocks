@@ -1,2 +1,2 @@
 # GenTextBlocks
-Generate images of text blocks for OCR training
+Generate images of text blocks for OCR training.
