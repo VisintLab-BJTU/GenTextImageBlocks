@@ -1,3 +1,5 @@
+#/usr/bin/python
+#-*-coding=UTF-8-*-
 # --------------------------------------------------------
 # GenTextBlocks
 # Copyright (c) 2017 VisInt
@@ -96,24 +98,24 @@ def GetMeanStd(grayImage, binImage, preOrBack):
     std = (stdvalue/len(valuelist))**0.5
     return mean, std
 
-imagesList = ['/home/zhangjing/data/Test_image/Image_1.JPG','/home/zhangjing/data/Test_image/Image_2.JPG']
-matList = LoadImages(imagesList)
-for img in matList:
-    grayimg = GrayImage(img)
-    cv2.namedWindow('GrayImage')
-    cv2.imshow('GrayImage',grayimg)
-    cv2.waitKey(0)
-    if IsGrayImage(grayimg):
-        print('This is a gray image.\n')
-    else:
-        print('This is not a gray image.\n')
-    cv2.destroyAllWindows()
-    binaryimg = BinImage(grayimg)
-    cv2.namedWindow('BinaryImage')
-    cv2.imshow('BinaryImage', binaryimg)
-    cv2.waitKey(0)
-    if IsDarkCharLightBack(binaryimg):
-        print('Black words White background')
-    else:
-        print('White words Black background')
-    mean,std = GetMeanStd(grayimg,binaryimg,'back')
+# imagesList = ['/home/zhangjing/data/Test_image/Image_1.JPG','/home/zhangjing/data/Test_image/Image_2.JPG']
+# matList = LoadImages(imagesList)
+# for img in matList:
+#     grayimg = GrayImage(img)
+#     cv2.namedWindow('GrayImage')
+#     cv2.imshow('GrayImage',grayimg)
+#     cv2.waitKey(0)
+#     if IsGrayImage(grayimg):
+#         print('This is a gray image.\n')
+#     else:
+#         print('This is not a gray image.\n')
+#     cv2.destroyAllWindows()
+#     binaryimg = BinImage(grayimg)
+#     cv2.namedWindow('BinaryImage')
+#     cv2.imshow('BinaryImage', binaryimg)
+#     cv2.waitKey(0)
+#     if IsDarkCharLightBack(binaryimg):
+#         print('Black words White background')
+#     else:
+#         print('White words Black background')
+#     mean,std = GetMeanStd(grayimg,binaryimg,'back')
