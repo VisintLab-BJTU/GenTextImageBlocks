@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # --------------------------------------------------------
 # GenTextBlocks
 # Copyright (c) 2017 VisInt
@@ -24,7 +26,7 @@ class TemplateImage(object):
 
     def ComputeMeanStds(self):
         meanStds = []
-        imagesList = IOUtils.GetImageList(self.pathToTemplateImages)
+        imagesList = IOUtils.GetFilesList(self.pathToTemplateImages)
         logging.info("Done. Load all template images: "+str(len(imagesList)))
         count = 0
         for imageName in imagesList:

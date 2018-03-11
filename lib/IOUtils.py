@@ -4,7 +4,7 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Siqi Cai and Wenyuan Xue
 # --------------------------------------------------------
-
+import logging
 
 
 #输入：图像所在文件夹的路劲
@@ -27,12 +27,16 @@ def IsImage():
 
 #输入：图像列表，文件名称列表，保存路劲
 #输出：顺利保存返回True，否则抛出异常
-def saveImages(matList, nameList, savePath):
+def SaveImages(matList, nameList, savePath):
 
     return True
 
 #输入：文本列表，文件名称列表，保存路劲
 #输出：顺利保存返回True，否则抛出异常
-def saveText(textList, nameList, savePath):
+def SaveText(textList, nameList, savePath):
+
+    return True
+
+def SaveData(savePath, images, numLabels, charLabels, filesPerDir = 10000)
 
     return True

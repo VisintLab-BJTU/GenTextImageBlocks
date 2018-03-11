@@ -1,5 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import cv2
 import numpy as np
+import logging
 
 def LoadImages(imagesList):
     matList = []
@@ -19,7 +22,7 @@ def IsDarkCharLightBack(binMat):
     binMat.shape[1]-1, binMat.shape[1]-1, binMat.shape[1]-2, binMat.shape[1]-2,\
     binMat.shape[1]-1, binMat.shape[1]-1, binMat.shape[1]-2, binMat.shape[1]-2]
     for ind in range(16):
-        if binMat[coordX[ind]][coordY[ind]] < 125:
+        if binMat[coordX[ind],coordY[ind]] < 125:
             count += 1
         else: count -= 1
     return (True if count < 0 else False)
@@ -28,15 +31,39 @@ def BinImage(grayImage):
     threshold,binImage = cv2.threshold(grayImage,0,255,cv2.THRESH_BINARY|cv2.THRESH_OTSU)
     return binImage
 
-def GrayImage(img):
-    img = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
-    return img
-
 def IsGrayImage(img):
     if img.shape[2] == 1:
         return True
     else:
         return False# or True
+
+def GrayImage(img):
+    if IsGrayImage(img):
+        return img
+    else:
+        img = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
+        return img
+
+def TextRegion(Image):
+    binImg = BinImage(Image)
+    if not IsDarkCharLightBack(binImg):
+        tempM = np.ones(binImg.shape,dtype="uint8")*255
+        binImg = cv2.subtract(tempM, binImg)
+    xT = []
+    yT = []
+    for i in range(binImg.shape[0]):
+        for j in range(binImg.shape[1]):
+            #print(binImg[i,j])
+            if binImg[i,j] == 0:
+                xT.append(j)
+                yT.append(i)
+            elif binImg[i,j] != 255:
+                logging.warning("ImageUtils.TextRegion. Image should be a binary mat.")
+    xMin = min(xT)
+    xMax = max(xT)
+    yMin = min(yT)
+    yMax = max(yT)
+    return binImg[yMin:yMax,xMin:xMax]
 
 def GetMeanStd(grayImage, binImage, preOrBack):
     valuelist = []
