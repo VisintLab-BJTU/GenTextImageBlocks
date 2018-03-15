@@ -35,11 +35,6 @@ class FT(object):
         self.face    = Face(self.fontFile)
         self.face.set_pixel_sizes( self.fontSize, self.fontSize )
 
-    #def to_c_str(self,text):
-    #    ''' Convert python strings to null terminated c strings. '''
-    #    cStr = create_string_buffer(text.encode(encoding='UTF-8'))
-    #    return cast(pointer(cStr), POINTER(c_char))
-
     def SetMatrix(self, angle):
         return Matrix(0x10000L,int(angle*0x10000L),0,0x10000L)
 
@@ -52,7 +47,7 @@ class FT(object):
     def SetFontSize(self, fontSize = 32):
         return fontSize
 
-    def StringToMat(self, text, foreGround, backGround):#foreGround & backGround: np.array
+    def StringToMat(self, text):#foreGround & backGround: np.array
         text = unicode(text, 'utf-8')
         slot = self.face.glyph
 
@@ -68,11 +63,7 @@ class FT(object):
             width += (slot.advance.x >> 6) + (kerning.x >> 6)
             previous = c
 
-        img = np.ones((height,width,3), dtype=np.uint8)
-        #img = np.ones((self.fontSize+8,self.fontSize*len(text)), dtype=np.uint8)*backGround[0]
-        for i in range(img.shape[2]):
-            img[:,:,i] = img[:,:,i]*backGround[i]
-
+        img = np.ones((height,width,3), dtype=np.uint8)*255
         x, y = 0, 0
         previous = 0
         for char in text:

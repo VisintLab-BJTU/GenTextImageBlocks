@@ -27,8 +27,12 @@ def IsDarkCharLightBack(binMat):
         else: count -= 1
     return (True if count < 0 else False)
 
-def BinImage(grayImage):
-    threshold,binImage = cv2.threshold(grayImage,0,255,cv2.THRESH_BINARY|cv2.THRESH_OTSU)
+def BinImage(img):
+    if IsGrayImage(img):
+        threshold,binImage = cv2.threshold(img,0,255,cv2.THRESH_BINARY|cv2.THRESH_OTSU)
+    else:
+        grayImage = GrayImage(img)
+        threshold,binImage = cv2.threshold(grayImage,0,255,cv2.THRESH_BINARY|cv2.THRESH_OTSU)
     return binImage
 
 def IsGrayImage(img):

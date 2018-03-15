@@ -18,12 +18,17 @@ import Test_ImageUtils as ImageUtils
 from font import FT
 
 class TextImageBlockGenerater(object):
-    def __init__(self, fontPath, dictPath, scales, degrees):
+    def __init__(self, fontPath, dictPath, scales, degrees,templatePath=""):
         self.fontList = [osj(fontPath, font) for font in IOUtils.GetFilesList(fontPath)]
         self.scales = scales
         self.degrees = degrees
         self.charDict = self.LoadDict(dictPath)
         self.parms = self.GenParms()
+        self.hasTemplate = False
+        if len(templatePath)!=0:
+            print("templatePath")
+            self.hasTemplate = True
+            self.templates = self.LoadTemplate(templatePath)
 
     def LoadDict(self, dictPath):
         f = open(dictPath,'r')
@@ -33,6 +38,15 @@ class TextImageBlockGenerater(object):
             line = line.replace('\n','').replace('\r','').strip(' ').split(' ')
             charDict[int(line[0])] = line[1]
         return charDict
+
+    def LoadTemplate(self, templatePath):
+        f = open(templatePath,'r')
+        templateText = f.read().strip('\n').split('\n')
+        templateList = []
+        for line in templateText:
+            line = line.replace('\n','').replace('\r','').strip(' ').split(' ')
+            templateList.append((float(line[0]),min(20.0,float(line[1])),float(line[2]),min(10.0,float(line[3]))))
+        return templateList
 
     def GenParms(self):
         parms = []
@@ -48,12 +62,34 @@ class TextImageBlockGenerater(object):
                     parms.append(parm)
         return parms
 
-    def GeneratePureImg(self, stdHeight, maxLeftBlank, maxRightBlank, maxTopBlank, maxBottomBlank, font, text):
+    def AddGaussianNoise(self, srcImg):
+        rows = srcImg.shape[0]
+        cols = srcImg.shape[1]
+        templatesSize = len(self.templates)
+        meanFore,stddevFore,meanBack,stddevBack = self.templates[random.randint(0, templatesSize-1)]
+        foreTemplate = np.random.normal(meanFore, stddevFore,(rows,cols)).astype(np.uint8)
+        backTemplate = np.random.normal(meanBack, stddevBack,(rows,cols)).astype(np.uint8)
+        noiseImage = np.zeros((rows,cols), dtype=np.uint8)
+
+        binImg = ImageUtils.BinImage(srcImg)
+
+        for indRow in range(rows):
+            for indCol in range(cols):
+                if binImg[indRow,indCol] == 255:
+                    noiseImage[indRow,indCol] = backTemplate[indRow,indCol]
+                else:
+                    noiseImage[indRow,indCol] = foreTemplate[indRow,indCol]
+
+        noiseImage = cv2.cvtColor(noiseImage,cv2.COLOR_GRAY2RGB)
+
+        return noiseImage
+
+    def GenerateImg(self, stdHeight, maxLeftBlank, maxRightBlank, maxTopBlank, maxBottomBlank, font, text, noiseImg = False):
         #generate binary image
         if len(text) == 0:
             logging.warning("Processing. String is empty.")
             return False, False, False
-        img = font.StringToMat(text, np.array([0,0,0]), np.array([255,255,255]))
+        img = font.StringToMat(text)
         #cv2.imwrite(text+"_font"+".jpg",img)
         if img.shape[0]*img.shape[1] <= 5:
             logging.warning("Processing. Image is too small.")
@@ -74,8 +110,11 @@ class TextImageBlockGenerater(object):
             lableTemp = list(self.charDict.keys())[list(self.charDict.values()).index(char)]
             resLabel.append(lableTemp)
         #cv2.imwrite(text+str(resLabel)+"_res.jpg",resImage)
+        if noiseImg:
+            resImage = self.AddGaussianNoise(textImg)
+
         return resImage, resLabel, True
-    def GeneratePureImgs(self, count, texts):
+    def GenerateImgs(self, count, texts, imgType = "Pure"): #type: Pure, Noise
         tImages = []
         tNumLabels = []
         tCharLabels = []
@@ -98,7 +137,10 @@ class TextImageBlockGenerater(object):
             textId = textID[idx]
             parmId = parmID[idx]
             font = FT(self.parms[parmId])
-            resImage, resLabel, resState =  self.GeneratePureImg(32,32,32,5,5,font,texts[textId])
+            if (not(imgType == "Pure")) and self.hasTemplate:
+                resImage, resLabel, resState =  self.GenerateImg(32,32,32,5,5,font,texts[textId], True)
+            else:
+                resImage, resLabel, resState =  self.GenerateImg(32,32,32,5,5,font,texts[textId], False)
             if resState is True:
                 tImages.append(resImage)
                 tNumLabels.append(resLabel)

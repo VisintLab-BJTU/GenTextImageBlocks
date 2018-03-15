@@ -14,15 +14,11 @@ import lib.Test_ImageUtils as ImageUtils
 from lib.templateImage import TemplateImage
 from lib.textImageBlockGenerater import TextImageBlockGenerater
 
-def FromBinToGaussImages():
-
-    return 0
 
 if __name__ == '__main__':
     template = TemplateImage("./myData/srcData")
     template.SaveMeanStd("./myData/template.txt")
-    imageBlock = TextImageBlockGenerater("./font", "./myData/map.txt", [1.0], [0.0])
-    textImages, textNumLabels, textCharLabels = imageBlock.GeneratePureImgs(20, ["hello","world"])
+    imageBlock = TextImageBlockGenerater("./font", "./myData/map.txt", [1.0], [0.0], "./myData/template.txt")
+    textImages, textNumLabels, textCharLabels = imageBlock.GenerateImgs(20, ["hello","world"],imgType = "Noise")
     IOUtils.SaveData("./myData", textImages, textNumLabels, textCharLabels)
-    FromBinToGaussImages()
     print('Done.')
