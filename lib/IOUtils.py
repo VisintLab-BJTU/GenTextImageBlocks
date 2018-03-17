@@ -97,6 +97,23 @@ def SaveData(savePath, images, numLabels, charLabels, filesPerDir = 10000):
 #输入：文本列表，文件名称列表，保存路劲
 #输出：顺利保存返回True，否则抛出异常
 def saveText(textList, nameList, savePath):
-
+    assert (len(textList) == len(nameList) ), \
+        "The number of textList don't equal to nameList."
+    for i in range(len(textList)):
+        f=open(savePath+'/'+nameList[i],'w')
+        f.write(textList[i])
+        f.close()
     return True
 
+
+def LoadMeanStds(file_name, mean_stds):
+    results = open(file_name)
+    lines = results.readlines()
+    logging.info('Total ' + len(lines) + ' lines')
+    for l in lines:
+        mean_std = []
+        print l
+        ls = l.split(' ')
+        for i in xrange(4):
+            mean_std.append(float(ls[i]))
+        mean_stds.append(mean_stds)
