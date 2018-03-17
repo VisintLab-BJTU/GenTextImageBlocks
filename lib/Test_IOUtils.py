@@ -13,6 +13,16 @@ def GetFilesList(pathToImage):
 			ret.append(filename)
 	return ret
 
+def LoadTexts(textPath):
+    f = open(textPath,'r')
+    texts = f.read()
+    texts = unicode(texts, 'utf-8')
+    texts = texts.replace(' ','').replace('\r','').strip('\n').split('\n')
+    textsList = []
+    for line in texts:
+        textsList.append(line)
+    return textsList
+
 def SaveData(savePath, images, numLabels, charLabels, filesPerDir = 10000):
     logging.info("Saving Data. Total: %d images", len(images))
     assert (len(images)==len(numLabels) and len(images)==len(charLabels)),\
@@ -46,7 +56,7 @@ def SaveData(savePath, images, numLabels, charLabels, filesPerDir = 10000):
             nf.close()
         #save charLabels
         cf = open(charLabelsFile, 'w')
-        cf.write(charLabels[ind])
+        cf.write(charLabels[ind].encode('utf-8'))
         cf.close()
         percentage = int(ind*100.0/(imgLength*1.0))
         if percentage % 5 == 0:

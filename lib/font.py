@@ -48,7 +48,7 @@ class FT(object):
         return fontSize
 
     def StringToMat(self, text):#foreGround & backGround: np.array
-        text = unicode(text, 'utf-8')
+        #text = unicode(text, 'utf-8')
         slot = self.face.glyph
 
         # First pass to compute bbox
