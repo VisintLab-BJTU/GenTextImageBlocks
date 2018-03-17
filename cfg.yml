@@ -1,0 +1,10 @@
+SOURCE:
+  TEMPLATE_PATH: './myData/srcData'
+  FONT_PATH: './font'
+  TEXTS_FILE: './myData/words.txt'
+  TEMPLATE_FILE: './myData/template.txt'
+  DICT_FILE: './myData/map.txt'
+SAVE:
+  TEMPLATE_FILE: './myData/template.txt'
+  IMAGE_PATH: './myData'
+IMAGES_COUNT: 50

@@ -26,13 +26,14 @@ class TextImageBlockGenerater(object):
         self.parms = self.GenParms()
         self.hasTemplate = False
         if len(templatePath)!=0:
-            print("templatePath")
             self.hasTemplate = True
             self.templates = self.LoadTemplate(templatePath)
 
     def LoadDict(self, dictPath):
         f = open(dictPath,'r')
-        dictText = f.read().strip('\n').split('\n')
+        dictText = f.read()
+        dictText = unicode(dictText, 'utf-8')
+        dictText = dictText.strip('\n').split('\n')
         charDict = {0:' '}
         for line in dictText:
             line = line.replace('\n','').replace('\r','').strip(' ').split(' ')
@@ -81,7 +82,6 @@ class TextImageBlockGenerater(object):
                     noiseImage[indRow,indCol] = foreTemplate[indRow,indCol]
 
         noiseImage = cv2.cvtColor(noiseImage,cv2.COLOR_GRAY2RGB)
-
         return noiseImage
 
     def GenerateImg(self, stdHeight, maxLeftBlank, maxRightBlank, maxTopBlank, maxBottomBlank, font, text, noiseImg = False):
@@ -114,7 +114,10 @@ class TextImageBlockGenerater(object):
             resImage = self.AddGaussianNoise(textImg)
 
         return resImage, resLabel, True
-    def GenerateImgs(self, count, texts, imgType = "Pure"): #type: Pure, Noise
+
+    def GenerateImgs(self, count, textsFile, imgType = "PURE"): #type: PURE, NOISE
+        texts = IOUtils.LoadTexts(textsFile)
+
         tImages = []
         tNumLabels = []
         tCharLabels = []
@@ -137,7 +140,7 @@ class TextImageBlockGenerater(object):
             textId = textID[idx]
             parmId = parmID[idx]
             font = FT(self.parms[parmId])
-            if (not(imgType == "Pure")) and self.hasTemplate:
+            if (not(imgType == "PURE")) and self.hasTemplate:
                 resImage, resLabel, resState =  self.GenerateImg(32,32,32,5,5,font,texts[textId], True)
             else:
                 resImage, resLabel, resState =  self.GenerateImg(32,32,32,5,5,font,texts[textId], False)
@@ -148,5 +151,5 @@ class TextImageBlockGenerater(object):
             else:
                 random.shuffle(textID)
             if i % 100 == 0:
-                logging.info("Prosessing. %d images have been generated.")
+                logging.info("Prosessing. %d images have been generated.", i)
         return tImages, tNumLabels, tCharLabels
