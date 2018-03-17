@@ -33,14 +33,17 @@ $ sudo python setup.py install
 
 ### Data Preparation
 **GenTextBlocks** can turn a single line text to an image for most languages. Two files are needed before generation.  
+
 **TEXTS_FILE**. This file saves the texts that you want to change them into images. In the file, texts are wrote line by line, and the file should be saved using UTF-8 encoding. We give an example in "./myData/words.txt".  
+
 **DICT_FILE**. This file saves a dict for TEXTS_FILE. Once we have a TEXTS_FILE, DICT_FILE can be generated automatically by running the file, "./myData/tools/genDict.py".  
+
 **TEMPLATE_FILE**. If you want to generate some images that have similar foreground and background with the real image, you are supposed to give some template images.  
 In the file of "./cfg.yml", you can modify the paths of some source files, the directories for saving and the number of generated images.
 ### Generate Pure or Noisy Images
 After data preparation, run:
 ```
-$ python ./gen_text.py --cfg './cfg.yml' --imgType 'PURE' --noiseMode Template
+$ python ./gen_text.py --cfg './cfg.yml' --imgType 'PURE' --noiseMode 'Template'
 ```
 --cfg, cfg file can be ignored while using default configuration.
 
