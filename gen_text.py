@@ -30,7 +30,7 @@ def parse_args():
   parser.add_argument('--imgType', dest='Pure_or_Noise',
                       help='type of generated images',
                       default='Pure', type=str)
-  parser.add_argument('--noiseMode', dest='template_or_imgaug',
+  parser.add_argument('--noiseMode', dest='Template_or_Imgaug',
                       help='mode to add noise ',
                       default=None, type=str)
 
@@ -56,7 +56,8 @@ if __name__ == '__main__':
     template.SaveMeanStd(cfg.SAVE.TEMPLATE_FILE)
     imageBlock = TextImageBlockGenerater(cfg.SOURCE.FONT_PATH, cfg.SOURCE.DICT_FILE, \
           cfg.SCALES, cfg.DEGREES, cfg.SOURCE.TEMPLATE_FILE)
-    textImages, textNumLabels, textCharLabels = imageBlock.GenerateImgs(cfg.IMAGES_COUNT, cfg.SOURCE.TEXTS_FILE, args.Pure_or_Noise)
+    textImages, textNumLabels, textCharLabels = imageBlock.GenerateImgs(cfg.IMAGES_COUNT, \
+          cfg.SOURCE.TEXTS_FILE, args.Pure_or_Noise, args.Template_or_Imgaug)
     savingPath = os.path.join(cfg.SAVE.IMAGE_PATH, args.Pure_or_Noise)
     IOUtils.SaveData(savingPath, textImages, textNumLabels, textCharLabels)
 

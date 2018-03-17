@@ -22,7 +22,7 @@ with open ('../freq.txt', 'w') as f:
         if word == '\n' or word == '\r':
             print 'yes!'       
         _map.append(word)
-        f.write(word.encode('utf-8') + " " + str(cnt) + "\n")
+        #f.write(word.encode('utf-8') + " " + str(cnt) + "\n")
 
 _map.sort()
 

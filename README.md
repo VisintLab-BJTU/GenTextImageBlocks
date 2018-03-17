@@ -10,6 +10,7 @@ Required packages:
 - OpenCV(cv2)
 - FreeType(version 2.\*)
 - freetype-py(Freetype python bindings)
+- [imgaug](https://github.com/aleju/imgaug)
 
 Following under steps to install FreeType.
 ```
@@ -27,6 +28,10 @@ For freetype-py.
 $ git clone https://github.com/rougier/freetype-py.git
 $ cd freetype-py
 $ sudo python setup.py install
+```
+Install imgaug:
+```
+$ sudo pip install git+https://github.com/aleju/imgaug
 ```
 
 ## Usage
@@ -49,5 +54,5 @@ $ python ./gen_text.py --cfg './cfg.yml' --imgType 'PURE' --noiseMode 'Template'
 
 --imgType, you can choose 'PURE' for white background and black foreground, or 'NOISE' for noisy background and foreground.
 
---noiseMode, 'Template', adding noise according to template images. 'Imgaug', adding noise using imgaug library.(**imgaug mode has not been added.**)
+--noiseMode, 'Template', adding noise according to template images. 'Imgaug', adding noise using imgaug library. We highly recommend that you use [imgaug](https://github.com/aleju/imgaug) library to augment images with more variation. You can edit *ImageAug()* function in "./lib/textImageBlockGenerater.py".
 ## Experiment Results

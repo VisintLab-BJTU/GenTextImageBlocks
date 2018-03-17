@@ -16,6 +16,7 @@ import cv2
 import Test_IOUtils as IOUtils
 import Test_ImageUtils as ImageUtils
 from font import FT
+from imgaug import augmenters as iaa
 
 class TextImageBlockGenerater(object):
     def __init__(self, fontPath, dictPath, scales, degrees,templatePath=""):
@@ -84,7 +85,15 @@ class TextImageBlockGenerater(object):
         noiseImage = cv2.cvtColor(noiseImage,cv2.COLOR_GRAY2RGB)
         return noiseImage
 
-    def GenerateImg(self, stdHeight, maxLeftBlank, maxRightBlank, maxTopBlank, maxBottomBlank, font, text, noiseImg = False):
+    def ImageAug(self, srcImg):
+        seq = iaa.Sequential([
+            iaa.AdditiveGaussianNoise(scale=(0.1, 0.2*255),per_channel=0.5),
+            iaa.Grayscale(alpha=(0.5, 1.0))
+        ])
+        noiseImage = seq.augment_image(srcImg)
+        return noiseImage
+
+    def GenerateImg(self, stdHeight, maxLeftBlank, maxRightBlank, maxTopBlank, maxBottomBlank, font, text, noiseImg = False, noiseMode = "Imgaug"):
         #generate binary image
         if len(text) == 0:
             logging.warning("Processing. String is empty.")
@@ -111,11 +120,14 @@ class TextImageBlockGenerater(object):
             resLabel.append(lableTemp)
         #cv2.imwrite(text+str(resLabel)+"_res.jpg",resImage)
         if noiseImg:
-            resImage = self.AddGaussianNoise(textImg)
+            if noiseMode == "Imgaug":
+                resImage = self.ImageAug(textImg)
+            else:
+                resImage = self.AddGaussianNoise(textImg)
 
         return resImage, resLabel, True
 
-    def GenerateImgs(self, count, textsFile, imgType = "PURE"): #type: PURE, NOISE
+    def GenerateImgs(self, count, textsFile, imgType = "PURE", noiseMode = "Imgaug"): #type: PURE, NOISE
         texts = IOUtils.LoadTexts(textsFile)
 
         tImages = []
@@ -141,9 +153,9 @@ class TextImageBlockGenerater(object):
             parmId = parmID[idx]
             font = FT(self.parms[parmId])
             if (not(imgType == "PURE")) and self.hasTemplate:
-                resImage, resLabel, resState =  self.GenerateImg(32,32,32,5,5,font,texts[textId], True)
+                resImage, resLabel, resState =  self.GenerateImg(32,32,32,5,5,font,texts[textId], True, noiseMode)
             else:
-                resImage, resLabel, resState =  self.GenerateImg(32,32,32,5,5,font,texts[textId], False)
+                resImage, resLabel, resState =  self.GenerateImg(32,32,32,5,5,font,texts[textId], False, )
             if resState is True:
                 tImages.append(resImage)
                 tNumLabels.append(resLabel)
