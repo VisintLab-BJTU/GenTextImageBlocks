@@ -50,6 +50,8 @@ In the file of "./cfg.yml", you can modify the paths of some source files, the d
 ### Generate Pure or Noisy Images
 After data preparation, run:
 ```
+$ git clone https://github.com/VisintLab-BJTU/GenTextBlocks.git
+$ cd GenTextBlocks
 $ python ./gen_text.py --cfg './cfg.yml' --imgType 'PURE' --noiseMode 'Template'
 ```
 --cfg, cfg file can be ignored while using default configuration.
