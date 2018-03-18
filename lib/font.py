@@ -13,8 +13,8 @@ import logging
 import numpy as np
 import cv2
 from freetype import *
-import Test_IOUtils as IOUtils
-import Test_ImageUtils as ImageUtils
+import IOUtils as IOUtils
+import ImageUtils as ImageUtils
 
 logging.basicConfig(level=logging.INFO)
 

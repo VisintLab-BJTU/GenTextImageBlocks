@@ -13,8 +13,8 @@ import logging
 import random
 import numpy as np
 import cv2
-import Test_IOUtils as IOUtils
-import Test_ImageUtils as ImageUtils
+import IOUtils as IOUtils
+import ImageUtils as ImageUtils
 from font import FT
 from imgaug import augmenters as iaa
 
@@ -23,12 +23,12 @@ class TextImageBlockGenerater(object):
         self.fontList = [osj(fontPath, font) for font in IOUtils.GetFilesList(fontPath)]
         self.scales = scales
         self.degrees = degrees
-        self.charDict = self.LoadDict(dictPath)
+        self.charDict = IOUtils.LoadDict(dictPath)
         self.parms = self.GenParms()
         self.hasTemplate = False
         if len(templatePath)!=0:
             self.hasTemplate = True
-            self.templates = self.LoadTemplate(templatePath)
+            self.templates = IOUtils.LoadTemplate(templatePath)
 
     def LoadDict(self, dictPath):
         f = open(dictPath,'r')

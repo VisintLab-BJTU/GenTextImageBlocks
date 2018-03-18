@@ -12,8 +12,8 @@ from os.path import join as osj
 import logging
 import numpy as np
 import cv2
-import Test_IOUtils as IOUtils
-import Test_ImageUtils as ImageUtils
+import IOUtils as IOUtils
+import ImageUtils as ImageUtils
 
 logging.basicConfig(level=logging.INFO)
 
