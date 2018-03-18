@@ -1,10 +1,4 @@
-# --------------------------------------------------------
-# GenTextBlocks
-# Copyright (c) 2017 VisInt
-# Licensed under The MIT License [see LICENSE for details]
-# Written by Siqi Cai and Wenyuan Xue
-# --------------------------------------------------------
-
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
 import cv2
@@ -12,20 +6,13 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
-
-
-#输入：图像所在文件夹路径
-#输出：该路径下，图像文件的列表(list)，如：['001.jpg','002.jpg',...]
-def GetImageList(pathToImage):
+def GetFilesList(pathToImage):
     ret = []
     for rt,dirs,files in os.walk(pathToImage):
         for filename in files:
 			ret.append(filename)
 	return ret
-    
 
-#输入：列举词条文件(如:./myData/words.txt)的路径(以UFT8解码)
-#输出：词条列表(list)，如：['hello','world',...]
 def LoadTexts(textPath):
     f = open(textPath,'r')
     texts = f.read()
@@ -36,19 +23,6 @@ def LoadTexts(textPath):
         textsList.append(line)
     return textsList
 
-#输入：单个图像路劲
-#输出：根据文件后缀(jpg,png,...)，判断文件是否为图像文件，返回True或者False
-def IsImage(filePath):
-    strs = filePath.split('.')
-    format = strs.pop()
-    if format == 'png' or format == 'jpg':
-        return True
-    else:
-        return False
-
-   
-#输入：保存路径，图像列表，文件名称列表，dat文件列表
-#输出：顺利保存返回True，否则抛出异常
 def SaveData(savePath, images, numLabels, charLabels, filesPerDir = 10000):
     logging.info("Saving Data. Total: %d images", len(images))
     assert (len(images)==len(numLabels) and len(images)==len(charLabels)),\
@@ -89,33 +63,3 @@ def SaveData(savePath, images, numLabels, charLabels, filesPerDir = 10000):
             logging.info("Saving Data. Saving, %d %%", percentage)
     logging.info("Saving Data. Saving Done.")
     return True
-
-#输入：图像列表，文件名称列表，保存路劲
-#输出：顺利保存返回True，否则抛出异常
-#def saveImages(matList, nameList, savePath):
-
-    #return True
-
-#输入：文本列表，文件名称列表，保存路劲
-#输出：顺利保存返回True，否则抛出异常
-def saveText(textList, nameList, savePath):
-    assert (len(textList) == len(nameList) ), \
-        "The number of textList don't equal to nameList."
-    for i in range(len(textList)):
-        f=open(savePath+'/'+nameList[i],'w')
-        f.write(textList[i])
-        f.close()
-    return True
-
-
-def LoadMeanStds(file_name, mean_stds):
-    results = open(file_name)
-    lines = results.readlines()
-    logging.info('Total ' + len(lines) + ' lines')
-    for l in lines:
-        mean_std = []
-        print l
-        ls = l.split(' ')
-        for i in xrange(4):
-            mean_std.append(float(ls[i]))
-        mean_stds.append(mean_stds)

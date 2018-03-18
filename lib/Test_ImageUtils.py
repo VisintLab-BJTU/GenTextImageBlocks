@@ -1,16 +1,9 @@
-#/usr/bin/python
-#-*-coding=UTF-8-*-
-# --------------------------------------------------------
-# GenTextBlocks
-# Copyright (c) 2017 VisInt
-# Licensed under The MIT License [see LICENSE for details]
-# Written by Jing Zhang and Wenyuan Xue
-# --------------------------------------------------------
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import cv2
 import numpy as np
+import logging
 
-#输入：含有图像完整路劲的list
-#输出：根据路劲载入图像，并返回一个mat类型的list
 def LoadImages(imagesList):
     matList = []
     for i in range(len(imagesList)):
@@ -18,37 +11,36 @@ def LoadImages(imagesList):
         matList.append(im)
     return matList
 
-#输入：二值图像
-#输出：判断图像是否为黑字白底，参考src/ImageUtils.cpp中的实现，输出True或者False
 def IsDarkCharLightBack(binMat):
     count = 0
-    rows = binMat.shape[0]
-    cols = binMat.shape[1]
-    dx = [0,1,0,1,rows-1,rows-2,rows-1,rows-2,0,1,0,1,rows-1,rows-2,rows-1,rows-2]
-    dy = [0,0,1,1,0,0,1,1,cols-1,cols-1,cols-2,cols-2,cols-1,cols-1,cols-2,cols-2]
-    for i in range(16):
-        if binMat[dx[i],dy[i]]<125:
-            count+=1
-        else:
-            count-=1
+    coordX = [0, 1, 0, 1,\
+    binMat.shape[0]-1, binMat.shape[0]-2, binMat.shape[0]-1, binMat.shape[0]-2,\
+    0, 1, 0, 1,\
+    binMat.shape[0]-1, binMat.shape[0]-2, binMat.shape[0]-1, binMat.shape[0]-2]
+    coordY = [0, 0, 1, 1,\
+    0, 0, 1, 1,\
+    binMat.shape[1]-1, binMat.shape[1]-1, binMat.shape[1]-2, binMat.shape[1]-2,\
+    binMat.shape[1]-1, binMat.shape[1]-1, binMat.shape[1]-2, binMat.shape[1]-2]
+    for ind in range(16):
+        if binMat[coordX[ind],coordY[ind]] < 125:
+            count += 1
+        else: count -= 1
     return (True if count < 0 else False)
 
-#输入：灰度图
-#输出：二值图(用OTSU的方法)
-def BinImage(grayImage):
-    threshold,binImage = cv2.threshold(grayImage,0,255,cv2.THRESH_BINARY|cv2.THRESH_OTSU)
+def BinImage(img):
+    if IsGrayImage(img):
+        threshold,binImage = cv2.threshold(img,0,255,cv2.THRESH_BINARY|cv2.THRESH_OTSU)
+    else:
+        grayImage = GrayImage(img)
+        threshold,binImage = cv2.threshold(grayImage,0,255,cv2.THRESH_BINARY|cv2.THRESH_OTSU)
     return binImage
 
-#输入：一张图像
-#输出：判断是否为灰度图，输出True或者False
 def IsGrayImage(img):
-    if len(img.shape)==2:
+    if img.shape[2] == 1:
         return True
     else:
         return False# or True
 
-#输入：rgb三通道图像
-#输出：灰度图
 def GrayImage(img):
     if IsGrayImage(img):
         return img
@@ -56,8 +48,27 @@ def GrayImage(img):
         img = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
         return img
 
-#输入：灰度图，二值图，目标背景(前景或后景)
-#输出：前景(或后景)的均值，标准差(浮点型),参考./src/TemplateImaeg.cpp中的实现
+def TextRegion(Image):
+    binImg = BinImage(Image)
+    if not IsDarkCharLightBack(binImg):
+        tempM = np.ones(binImg.shape,dtype="uint8")*255
+        binImg = cv2.subtract(tempM, binImg)
+    xT = []
+    yT = []
+    for i in range(binImg.shape[0]):
+        for j in range(binImg.shape[1]):
+            #print(binImg[i,j])
+            if binImg[i,j] == 0:
+                xT.append(j)
+                yT.append(i)
+            elif binImg[i,j] != 255:
+                logging.warning("ImageUtils.TextRegion. Image should be a binary mat.")
+    xMin = min(xT)
+    xMax = max(xT)
+    yMin = min(yT)
+    yMax = max(yT)
+    return binImg[yMin:yMax,xMin:xMax]
+
 def GetMeanStd(grayImage, binImage, preOrBack):
     valuelist = []
     #grayImage = cv2.blur(grayImage, cv2.Size(5, 5))
@@ -88,10 +99,10 @@ def GetMeanStd(grayImage, binImage, preOrBack):
     if len(valuelist) < 5:
         mean = -1.0
         stddev = -1.0
-        return mean,stddev
+        return mean, stddev
     targetArray = np.array(valuelist)
     mean = targetArray.mean()
     stddev = targetArray.std()
-    stddev = max(stddev,2.0)
+    stddev = max(stddev, 2.0)
 
     return mean, stddev
