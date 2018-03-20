@@ -3,9 +3,9 @@ by [xuewenyuan](https://github.com/xuewenyuan),
 [VisintZJ](https://github.com/VisintZJ),
 [lukecsq](https://github.com/lukecsq)
 ## Introduction
-This is a tiny project for OCR training, which can generate block images from a single line text. Both pure and noisy images can be generated.  
-![Pure](myData/examples/example_pure.jpg?raw=true "Pure")  
-![Noise](myData/examples/example_noise.jpg?raw=true "Noise")  
+This is a tiny project for OCR training, which can generate image blocks from a single line text. Both pure and noisy images can be generated. Examples:
+![Pure](myData/examples/example_pure.jpg?raw=true "Pure")  。
+![Noise](myData/examples/example_noise.jpg?raw=true "Noise")  
 ## Library Dependencies
 Required packages:
 - NumPy
