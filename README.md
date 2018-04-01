@@ -1,4 +1,4 @@
-# GenTextBlocks
+# Generate Text Image Blocks
 by [xuewenyuan](https://github.com/xuewenyuan),
 [VisintZJ](https://github.com/VisintZJ),
 [lukecsq](https://github.com/lukecsq)
